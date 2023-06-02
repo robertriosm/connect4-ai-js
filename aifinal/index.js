@@ -1,6 +1,7 @@
 const io = require("socket.io-client");
 // const socket = io("http://192.168.1.134:4000");
-const socket = io("http://localhost:4000");
+// const socket = io("http://localhost:4000");
+const socket = io("http://192.168.1.104:4000");
 const { makeMove } = require("./engine");
 
 // define event handlers

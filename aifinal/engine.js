@@ -1,4 +1,17 @@
 function scorePosition(board, playerId) {
+  /**
+   * esta funcion evalua fila por fila,
+   * columna por columna y en slope negativa y positiva
+   *
+   * params:
+   *  - board: matriz 6x7
+   *  - playerId: el id correspondiente al tiro
+   *
+   * returns:
+   *
+   *  - el total de scores por cada 4 espacios
+   */
+
   let score = 0;
 
   // Horizontal score
@@ -46,43 +59,55 @@ function scorePosition(board, playerId) {
 }
 
 function evaluateWindow(window, playerId) {
+  /**
+   * esta funcion hace la sumatoria individual asignando lo siguiente:
+   * 100: por juntar 4
+   * 5: por juntar 3 en fila
+   * 2: por juntar 2
+   * -4: por no impedir que fichas del oponente se junten
+   *
+   */
   let score = 0;
   let opponentId = 3 - playerId;
 
   if (window.filter((cell) => cell === playerId).length === 4) {
-    score += 100;
+    score += 10000;
   } else if (
     window.filter((cell) => cell === playerId).length === 3 &&
     window.filter((cell) => cell === 0).length === 1
   ) {
-    score += 5;
+    score += 50;
   } else if (
     window.filter((cell) => cell === playerId).length === 2 &&
     window.filter((cell) => cell === 0).length === 2
   ) {
-    score += 2;
+    score += 20;
   }
 
   if (
     window.filter((cell) => cell === opponentId).length === 3 &&
     window.filter((cell) => cell === 0).length === 1
   ) {
-    score -= 4;
+    score -= 40;
   }
 
   // Additional condition to detect winning moves
+  // incentivo para tiro ganador
   if (
     window.filter((cell) => cell === opponentId).length === 0 &&
     window.filter((cell) => cell === 0).length === 1
   ) {
-    score += 50;
+    score += 50000;
   }
 
   return score;
 }
 
 function isTerminalNode(board) {
-  // Check if the game is over
+  /**
+   * Esto revisa por cada fila, por cada columna y por slopes si ya hay cuatro en fila
+   *
+   */
   for (let row of board) {
     if (
       row.slice(0, 4).toString() === "1,1,1,1" ||
@@ -143,7 +168,7 @@ function isTerminalNode(board) {
     }
   }
 
-  // Check if the board is full
+  // si se llena el board se indica que ya no puede haber ganador
   for (let row of board) {
     if (row.includes(0)) {
       return false;
@@ -153,6 +178,11 @@ function isTerminalNode(board) {
 }
 
 function getValidMoves(board) {
+  /**
+   * esto sirve para chequear que no se puede tirar mas alla de la columna 0 o la 6
+   * returns:
+   * - array con posibles tiros por columna
+   */
   let validMoves = [];
   for (let col = 0; col < 7; col++) {
     if (board[0][col] === 0) {
@@ -163,6 +193,12 @@ function getValidMoves(board) {
 }
 
 function isWin(board, playerId) {
+  /**
+   * revisa horizontal, vertical y las slopes si ya hay 4 en fila
+   *
+   * returns:
+   * - boolean indicando true si gano o false si perdio
+   */
   // Check horizontal
   for (let row of board) {
     for (let col = 0; col < 4; col++) {
@@ -281,6 +317,9 @@ function minMax(board, depth, maximizingPlayer, playerId) {
 }
 
 function dropPiece(board, col, playerId) {
+  /**
+   *
+   */
   for (let row = 5; row >= 0; row--) {
     if (board[row][col] === 0) {
       board[row][col] = playerId;
@@ -291,7 +330,7 @@ function dropPiece(board, col, playerId) {
 
 function makeMove(gameboard, playerId) {
   const board = gameboard.map((row) => [...row]);
-  const depth = 4; // Adjust the depth of the min-max algorithm as needed
+  const depth = 6; // Adjust the depth of the min-max algorithm as needed
   return minMax(board, depth, true, playerId)[0];
 }
 
